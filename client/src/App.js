@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Customer from './components/Customer';
 import { Table, TableHead, TableBody, TableRow, TableCell, Paper, withStyles } from '@material-ui/core';
+import Axios from 'axios'
 
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing(3),
     overflowX: 'auto'
   },
   table: {
@@ -13,35 +14,29 @@ const styles = theme => ({
   }
 })
 
-const customer = [{
-  'id': 1,
-  'image': 'https://placeimg.com/64/64/any',
-  'name': '홍길동',
-  'birthday': '920303',
-  'gender': '남자',
-  'job': '대학생'
-}, {
-  'id': 2,
-  'image': 'https://placeimg.com/64/64/1',
-  'name': '박기영',
-  'birthday': '910303',
-  'gender': '남자',
-  'job': '디자이너'
-}, {
-  'id': 3,
-  'image': 'https://placeimg.com/64/64/2',
-  'name': '안성진',
-  'birthday': '910303',
-  'gender': '남자',
-  'job': '프로그래머'
-}
 
-
-
-]
 
 function App(props) {
   const { classes } = props;
+  const [Customers, setCustomers] = useState([])
+
+
+  const callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body
+  }
+
+  useEffect(() => {
+    // Axios.get('/api/customers').then(res => {
+    //   setCustomers(res.data);
+    // })
+    callApi().then(res => {
+      setCustomers(res)
+    }).catch(err => console.log(err))
+  }, [])
+
+
 
   return (
     <Paper className={classes.root}>
@@ -57,7 +52,7 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customer.map((customer) => <Customer key={customer.id} id={customer.id} image={customer.image} name={customer.name} birthday={customer.birthday} gender={customer.gender} job={customer.job} />)}
+          {Customers.map((customer) => <Customer key={customer.id} id={customer.id} image={customer.image} name={customer.name} birthday={customer.birthday} gender={customer.gender} job={customer.job} />)}
         </TableBody>
       </Table>
     </Paper>
